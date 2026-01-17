@@ -39,6 +39,9 @@ public class DrugDao extends BaseDao {
     public List<Drug> findAll() {
         List<Drug> drugs = new ArrayList<>();
         DBUtils.execSQL(connection -> {
+            if (connection == null) {
+                throw new RuntimeException("DB connection is null. Check DBUtils config / dbconfig / MySQL status.");
+            }
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement("select id,name,obj_cls,drug_url,biomarker from drug");
                 ResultSet resultSet = preparedStatement.executeQuery();

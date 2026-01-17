@@ -14,22 +14,24 @@ public class DBUtils {
     private static final Logger log = LoggerFactory.getLogger(DBUtils.class);
 
     public static Connection getConnection() {
-        Connection connection = null;
         AppConfig appConfig = AppConfig.getInstance();
+
+        String url = appConfig.getJdbcUrl();
+        String user = appConfig.getJdbcUsername();
+        String pwd = appConfig.getJdbcPassword();
+
+        System.out.println("[DB] url=" + url);
+        System.out.println("[DB] user=" + user);
+
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            log.info("", e);
+            return DriverManager.getConnection(url, user, pwd);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("DB connect failed. url=" + url + ", user=" + user, e);
         }
-        try {
-            connection = DriverManager.getConnection(appConfig.getJdbcUrl()
-                    , appConfig.getJdbcUsername()
-                    , appConfig.getJdbcPassword());
-        } catch (SQLException e) {
-            log.info("", e);
-        }
-        return connection;
     }
+
 
     public static void execSQL(Consumer<Connection> consumer) {
         Connection connection = null;
